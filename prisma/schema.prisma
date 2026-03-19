@@ -1,0 +1,189 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── AUTH ────────────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?   // hashed, nullable for OAuth users
+  role          UserRole  @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  subscription  Subscription?
+  apiKeys       ApiKey[]
+  fraudCases    FraudCase[]
+  contactForms  ContactForm[]
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  ANALYST
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── BILLING ─────────────────────────────────────────────────────────────────
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  stripeCustomerId     String             @unique
+  stripeSubscriptionId String?            @unique
+  stripePriceId        String?
+  stripeCurrentPeriodEnd DateTime?
+  status               SubscriptionStatus @default(INACTIVE)
+  plan                 PlanTier           @default(FREE)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  PAST_DUE
+  CANCELED
+  TRIALING
+}
+
+enum PlanTier {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+// ─── API KEYS ─────────────────────────────────────────────────────────────────
+
+model ApiKey {
+  id        String    @id @default(cuid())
+  userId    String
+  name      String
+  keyHash   String    @unique // sha256 of actual key
+  prefix    String    // first 8 chars shown in UI
+  lastUsed  DateTime?
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  revoked   Boolean   @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── FRAUD RISK ───────────────────────────────────────────────────────────────
+
+model FraudCase {
+  id          String      @id @default(cuid())
+  userId      String
+  txId        String      // external transaction reference
+  amount      Float
+  currency    String      @default("USD")
+  riskScore   Int         // 0-100
+  riskLevel   RiskLevel
+  signals     Json        // { velocity, geo, device, behavioral }
+  action      CaseAction
+  status      CaseStatus  @default(OPEN)
+  metadata    Json?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events   CaseEvent[]
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum CaseAction {
+  APPROVE
+  REVIEW
+  HOLD
+  BLOCK
+}
+
+enum CaseStatus {
+  OPEN
+  INVESTIGATING
+  RESOLVED
+  ESCALATED
+  CLOSED
+}
+
+model CaseEvent {
+  id        String    @id @default(cuid())
+  caseId    String
+  type      String
+  note      String?
+  createdAt DateTime  @default(now())
+
+  case FraudCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+}
+
+// ─── CONTACT FORMS ────────────────────────────────────────────────────────────
+
+model ContactForm {
+  id        String   @id @default(cuid())
+  userId    String?
+  firstName String
+  lastName  String
+  email     String
+  company   String?
+  product   String?
+  message   String   @db.Text
+  status    String   @default("unread")
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+}

@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+:root {
+  --font-syne: 'Syne', sans-serif;
+  --font-space-mono: 'Space Mono', monospace;
+  --font-dm-sans: 'DM Sans', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: #050608;
+  color: #f0f2f7;
+  font-family: var(--font-dm-sans);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0b0d12; }
+::-webkit-scrollbar-thumb { background: #2e3650; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #f5a623; }
+
+/* Selection */
+::selection { background: rgba(245,166,35,0.25); color: #f0f2f7; }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid #f5a623;
+  outline-offset: 2px;
+}
+
+/* Noise overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.35;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-amber text-black font-syne font-bold text-sm tracking-wider uppercase rounded transition-all duration-200 hover:bg-yellow-400 hover:shadow-[0_0_32px_rgba(245,166,35,0.45)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-transparent text-white border border-border-bright font-syne font-semibold text-sm tracking-wider uppercase rounded transition-all duration-200 hover:border-amber hover:text-amber active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-transparent text-red border border-red/30 font-syne font-semibold text-sm tracking-wider uppercase rounded transition-all duration-200 hover:bg-red/10 active:scale-[0.98];
+  }
+
+  .card {
+    @apply bg-card border border-border rounded-lg;
+  }
+
+  .card-hover {
+    @apply card transition-colors duration-200 hover:border-border-bright;
+  }
+
+  .input {
+    @apply w-full bg-card border border-border rounded px-4 py-3 text-white text-sm placeholder:text-muted focus:border-amber/40 focus:outline-none transition-colors duration-200;
+  }
+
+  .label {
+    @apply font-mono text-[0.65rem] tracking-[0.12em] uppercase text-muted mb-1.5 block;
+  }
+
+  .section-label {
+    @apply font-mono text-[0.7rem] tracking-[0.2em] uppercase text-amber flex items-center gap-3 mb-4;
+  }
+
+  .risk-critical { @apply text-red bg-red/10 border border-red/20; }
+  .risk-high { @apply text-orange-400 bg-orange-500/10 border border-orange-500/20; }
+  .risk-medium { @apply text-yellow-400 bg-yellow-500/10 border border-yellow-500/20; }
+  .risk-low { @apply text-cyan bg-cyan/10 border border-cyan/20; }
+}
+
+/* Animations */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.75); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.animate-fade-up { animation: fadeSlideUp 0.6s ease forwards; }
+.animate-fade-in { animation: fadeIn 0.4s ease forwards; }
+.animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+.animate-blink { animation: blink 1.2s step-end infinite; }
+
+/* Grid texture */
+.grid-texture {
+  background-image:
+    linear-gradient(rgba(245,166,35,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,166,35,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
