@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-const FROM = process.env.EMAIL_FROM || 'LEVELACE <hello@ilevelace.com>'
+const FROM = process.env.EMAIL_FROM || 'LEVELACE <hello@security.ilevelace.com>'
 const TO = process.env.EMAIL_TO || 'hello@ilevelace.com'
 
 // ─── CONTACT FORM ─────────────────────────────────────────────────────────────
