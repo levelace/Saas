@@ -46,7 +46,7 @@ export async function sendContactEmail(data: {
         <h2 style="color:#f5a623;">▶ Message Received</h2>
         <p>Hi ${data.firstName},</p>
         <p>We've received your inquiry and will get back to you within 24 business hours.</p>
-        <p style="color:#6b7591;">If your matter is urgent, email us directly at <a href="mailto:support@ilevelace.com" style="color:#f5a623;">support@ilevelace.com</a>.</p>
+        <p style="color:#6b7591;">If your matter is urgent, email us directly at <a href="mailto:support@security.ilevelace.com" style="color:#f5a623;">support@security.ilevelace.com</a>.</p>
         <hr style="border-color:#1e2330;margin:24px 0;">
         <p style="color:#3d4560;font-size:12px;">LEVELACE SENTINEL LLC · ilevelace.com</p>
       </div>
@@ -70,7 +70,7 @@ export async function sendWelcomeEmail(user: { email: string; name?: string | nu
           Go to Dashboard →
         </a>
         <hr style="border-color:#1e2330;margin:24px 0;">
-        <p style="color:#3d4560;font-size:12px;">LEVELACE SENTINEL LLC · support@ilevelace.com</p>
+        <p style="color:#3d4560;font-size:12px;">LEVELACE SENTINEL LLC · support@security.ilevelace.com</p>
       </div>
     `,
   })
@@ -92,7 +92,7 @@ export async function sendSubscriptionEmail(user: { email: string; name?: string
           Open Dashboard →
         </a>
         <hr style="border-color:#1e2330;margin:24px 0;">
-        <p style="color:#3d4560;font-size:12px;">Questions? billing@ilevelace.com · LEVELACE SENTINEL LLC</p>
+        <p style="color:#3d4560;font-size:12px;">Questions? billing@security.ilevelace.com · LEVELACE SENTINEL LLC</p>
       </div>
     `,
   })
